@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  bookstack:
+    image: lscr.io/linuxserver/bookstack:latest
+    container_name: bookstack
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - APP_KEY=base64:dTAYHkMIyfD0o715IpQP9LILLqgRlk08IuK0hYEtxxs=
+      - DB_HOST=192.168.1.216
+      - DB_PORT=3306
+      - DB_DATABASE=bookstack
+      - DB_USERNAME=bookstack
+      - DB_PASSWORD=bookstack@123
+      - APP_URL=http://192.168.20.81:8088
+    ports:
+      - "8088:80"
+    volumes:
+      - bookstack_data:/config
+
+volumes:
+  bookstack_data:

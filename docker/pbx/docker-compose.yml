@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  freepbx:
+    image: tiredofit/freepbx:latest
+    container_name: freepbx
+    restart: always
+    ports:
+      - "8091:80"       # HTTP Web GUI
+#      - "443:443"     # HTTPS Web GUI (optional)
+      - "5060:5060/udp"   # SIP Port
+      - "5160:5160/udp"   # Optional SIP for ChanSIP
+      - "18000-18100:18000-18100/udp"  # RTP Media Ports
+    environment:
+      - RTP_START=18000
+      - RTP_FINISH=18100
+      - SIPPROTOCOL=udp
+      - ASTERISK_VERSION=20
+      - ADMIN_EMAIL=admin@example.com
+      - ADMIN_PASSWORD=yourStrongPassword123
+    volumes:
+      - ./data:/data             # Configuration & logs
+      - ./log:/var/log           # Asterisk logs
+      - ./backup:/var/spool/asterisk/backup # Backups
+
+    networks:
+      - pbxnet
+
+networks:
+  pbxnet:
+    driver: bridge

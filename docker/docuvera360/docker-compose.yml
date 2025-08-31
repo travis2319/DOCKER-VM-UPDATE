@@ -1,0 +1,75 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: docuvera360_app
+    user: "1000:1000"
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Production
+#      - ASPNETCORE_URLS=http://+:5000
+#      - DOTNET_ENVIRONMENT=Production
+#      - ConnectionStrings__Defaultcon=Host=db;Port=5432;Database=docuvera360;Username=docuvera_user;Password=${DB_PASSWORD};Pooling=true;MinPoolSize=10;MaxPoolSize=100;
+#      - AzureAd__ClientId=${AZURE_CLIENT_ID}
+#      - AzureAd__ClientSecret=${AZURE_CLIENT_SECRET}
+#      - SMTPCredentials__Password=${SMTP_PASSWORD}
+#      - SuperAdmin__Password=${SUPER_ADMIN_PASSWORD}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      - AzureAd__ClientId=${AZURE_CLIENT_ID}
+      - AzureAd__ClientSecret=${AZURE_CLIENT_SECRET}
+      - ConnectionStrings__Defaultcon=Host=db;Port=5432;Database=docuvera360;Username=docuvera_user;Password=${DB_PASSWORD};Pooling=true;MinPoolSize=10;MaxPoolSize=100;
+      - DOTNET_ENVIRONMENT=Production
+      - SMTPCredentials__Password=${SMTP_PASSWORD}
+      - SuperAdmin__Password=${SUPER_ADMIN_PASSWORD}
+    volumes:
+      - app_data:/opt/docuvera360
+      - ./config/appsettings.Production.json:/opt/docuvera360/config/appsettings.Production.json:ro
+      - ./logs:/opt/docuvera360/logs
+      - ./uploads:/opt/docuvera360/uploads
+      - ./backups:/opt/docuvera360/backups
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - docuvera360_network
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    container_name: docuvera360_db
+    environment:
+      - POSTGRES_USER=docuvera_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=docuvera360
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./scripts/backup-database.sh:/docker-entrypoint-initdb.d/backup-database.sh
+    networks:
+      - docuvera360_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docuvera_user -d docuvera360"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+networks:
+  docuvera360_network:
+    driver: bridge
+
+volumes:
+  app_data:
+  db_data:

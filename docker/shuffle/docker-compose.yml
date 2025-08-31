@@ -1,0 +1,74 @@
+version: "3.7"
+services:
+  mongo:
+    image: mongo:4.4
+    restart: unless-stopped
+    volumes:
+      - shuffle-mongo:/data/db
+    networks:
+      - shuffle_net
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    networks:
+      - shuffle_net
+
+  shuffle-backend:
+    image: frikky/shuffle-backend:latest
+    container_name: shuffle-backend
+    restart: unless-stopped
+    environment:
+      - SHUFFLE_ENV=production
+      - MONGO_HOST=mongo
+      - REDIS_HOST=redis
+      # Use your existing OpenSearch instance:
+      - SHUFFLE_OPENSEARCH_URL=http://192.168.1.76:9200
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./shuffle-apps:/shuffle-apps       # place your custom apps/workflows here
+      - ./shuffle-files:/shuffle-files     # persistent storage for files
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - shuffle_net
+
+  shuffle-frontend:
+    image: frikky/shuffle-frontend:latest
+    container_name: shuffle-frontend
+    restart: unless-stopped
+    ports:
+ #     - "80:80"
+      - "4430:443"
+    environment:
+      - BACKEND_HOSTNAME=shuffle-backend
+    depends_on:
+      - shuffle-backend
+    networks:
+      - shuffle_net
+
+  orchestrator:
+    image: frikky/shuffle-orborus:latest
+    container_name: shuffle-orchestrator
+    restart: unless-stopped
+    environment:
+      - SHUFFLE_APP_INSTANCE=true
+      - SHUFFLE_ORBORUS=true
+      - SHUFFLE_BASE_URL=http://192.168.1.76:4430     # change to your public/FQDN if needed
+      - SHUFFLE_API_HOST=http://shuffle-backend:5001
+    depends_on:
+      - shuffle-backend
+    networks:
+      - shuffle_net
+
+volumes:
+  shuffle-mongo:
+  shuffle-apps:
+  shuffle-files:
+
+networks:
+  shuffle_net:
+    driver: bridge

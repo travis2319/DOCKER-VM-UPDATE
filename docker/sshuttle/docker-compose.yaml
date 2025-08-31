@@ -1,0 +1,13 @@
+version: '3'
+services:
+  sshuttle:
+    build: .
+    volumes:
+      - ./sshuttle_key.pem:/root/.ssh/id_rsa
+    environment:
+      TARGET_USER: ${TARGET_USER}
+      TARGET_HOST: ${TARGET_HOST}
+      REMOTE_PORT: ${REMOTE_PORT:-2020}
+      LOCAL_ADDRESS: ${LOCAL_ADDRESS}
+      LOCAL_PORT: ${LOCAL_PORT:-22}
+    restart: on-failure

@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  suricata:
+    image: jasonish/suricata:latest
+    container_name: suricata
+    network_mode: "host"  # Important for sniffing
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./suricata-logs:/var/log/suricata
+      - ./suricata-config:/etc/suricata
+    command: -c /etc/suricata/suricata.yaml -i eth1  # or the interface receiving mirrored traffic

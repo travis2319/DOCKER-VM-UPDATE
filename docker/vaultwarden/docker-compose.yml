@@ -1,0 +1,13 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    volumes:
+      - ./vw-data/:/data/
+    ports:
+      - 8082:80
+    environment:
+      ADMIN_TOKEN: "$$argon2id$$v=19$$m=65540,t=3,p=4$$V06EYuUc2XRgPyTY0CPrXVa4kl6qb8fZj2xtOQ4mhQQ$$24QJR6pWF/Xt6kxK8ejmfsnKwEz10belXNCHFMa2zkg"
+      WEBSOCKET_ENABLED: "true"
+      SIGNUPS_ALLOWED: "true"   # Optional: disable later

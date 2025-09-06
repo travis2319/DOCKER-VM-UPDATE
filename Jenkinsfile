@@ -2,7 +2,7 @@ pipeline {
     agent { label 'agent_20.81' }
 
     environment {
-        DOCKER_DIR = '/home/ubuntu/docker'
+        DOCKER_DIR = '/home/ubuntu/docker/osticket'
     }
 
     stages {
@@ -14,31 +14,19 @@ pipeline {
 
         stage('List Docker Folder Contents') {
             steps {
-                sh 'ls -la /home/ubuntu/docker'
+                sh 'ls -la /home/ubuntu/docker/osticket'
                 sh 'whoami'
             }
         }
-        stage('Deploy Docker Compose Stacks') {
+
+        stage('Deploy osticket Docker Compose') {
             steps {
-                script {
-                    def composeFiles = sh(
-                        script: "find ${env.DOCKER_DIR} -name 'docker-compose.yml'",
-                        returnStdout: true
-                    ).trim().split("\n")
+                dir("${env.DOCKER_DIR}") {
+                    echo "Pulling images for osticket"
+                    sh 'docker-compose pull'
 
-                    for (file in composeFiles) {
-                        echo "Processing compose file: ${file}"
-                        
-                        def dirPath = file.substring(0, file.lastIndexOf('/'))
-                        
-                        dir(dirPath) {
-                            echo "Pulling images"
-                            sh 'docker-compose pull'
-
-                            echo "Bringing up services"
-                            sh 'docker-compose up -d --remove-orphans'
-                        }
-                    }
+                    echo "Bringing up osticket services"
+                    sh 'docker-compose up -d --remove-orphans'
                 }
             }
         }

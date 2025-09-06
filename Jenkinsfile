@@ -3,6 +3,10 @@ pipeline {
         label 'agent_20.81'
     }
 
+    environment {
+        DOCKER_DIR = '/home/ubuntu/docker'
+    }
+
     stages {
         stage('Checkout') {
             steps {

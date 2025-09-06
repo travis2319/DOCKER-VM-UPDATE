@@ -15,6 +15,7 @@ pipeline {
         stage('List Docker Folder Contents') {
             steps {
                 sh 'ls -la /home/ubuntu/docker'
+                sh 'whoami'
             }
         }
     }

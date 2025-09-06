@@ -23,10 +23,10 @@ pipeline {
             steps {
                 dir("${env.DOCKER_DIR}") {
                     echo "Pulling images for osticket"
-                    sh 'docker-compose pull'
+                    sh 'docker compose pull'
 
                     echo "Bringing up osticket services"
-                    sh 'docker-compose up -d --remove-orphans'
+                    sh 'docker compose up -d --remove-orphans'
                 }
             }
         }

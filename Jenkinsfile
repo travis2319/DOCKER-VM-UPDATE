@@ -27,25 +27,6 @@ pipeline {
                 }
             }
         }
-
-        // stage('Deploy immich') {
-        //     steps {
-        //         dir("${DOCKER_DIR}/immich") {
-        //             sh 'docker compose pull'
-        //             //sh 'docker compose up -d --remove-orphans'
-        //         }
-        //     }
-        // }
-
-        // stage('Deploy nginx-proxy-manager') {
-        //     steps {
-        //         dir("${DOCKER_DIR}/nginx-proxy-manager") {
-        //             sh 'docker compose pull'
-        //             //sh 'docker compose up -d --remove-orphans'
-        //         }
-        //     }
-        // }
-
         stage('Deploy rustdesk') {
             steps {
                 dir("${DOCKER_DIR}/rustdesk") {
@@ -54,16 +35,6 @@ pipeline {
                 }
             }
         }
-
-        // stage('Deploy uptime') {
-        //     steps {
-        //         dir("${DOCKER_DIR}/uptime") {
-        //             sh 'docker compose pull'
-        //             //sh 'docker compose up -d --remove-orphans'
-        //         }
-        //     }
-        // }
-
         stage('Deploy beszel_agent') {
             steps {
                 dir("${DOCKER_DIR}/beszel_agent") {
@@ -90,6 +61,60 @@ pipeline {
                 }
             }
         }
+        
+        stage('Deploy netx') {
+            steps {
+                dir("${DOCKER_DIR}/netx") {
+                    sh 'docker compose pull'
+                    sh 'docker compose up -d --remove-orphans'
+                }
+            }
+        }
+
+        stage('Deploy nextcloud') {
+            steps {
+                dir("${DOCKER_DIR}/nextcloud") {
+                    sh 'docker compose pull'
+                    sh 'docker compose up -d --remove-orphans'
+                }
+            }
+        }
+
+        stage('Deploy portainer') {
+            steps {
+                dir("${DOCKER_DIR}/portainer") {
+                    sh 'docker compose pull'
+                    sh 'docker compose up -d --remove-orphans'
+                }
+            }
+        }
+
+        // stage('Deploy immich') {
+        //     steps {
+        //         dir("${DOCKER_DIR}/immich") {
+        //             sh 'docker compose pull'
+        //             //sh 'docker compose up -d --remove-orphans'
+        //         }
+        //     }
+        // }
+
+        // stage('Deploy nginx-proxy-manager') {
+        //     steps {
+        //         dir("${DOCKER_DIR}/nginx-proxy-manager") {
+        //             sh 'docker compose pull'
+        //             //sh 'docker compose up -d --remove-orphans'
+        //         }
+        //     }
+        // }
+
+        // stage('Deploy uptime') {
+        //     steps {
+        //         dir("${DOCKER_DIR}/uptime") {
+        //             sh 'docker compose pull'
+        //             //sh 'docker compose up -d --remove-orphans'
+        //         }
+        //     }
+        // }
 
         // stage('Deploy shuffle') {
         //     steps {
@@ -136,15 +161,6 @@ pipeline {
         //     }
         // }
 
-        stage('Deploy netx') {
-            steps {
-                dir("${DOCKER_DIR}/netx") {
-                    sh 'docker compose pull'
-                    sh 'docker compose up -d --remove-orphans'
-                }
-            }
-        }
-
         // stage('Deploy thehive_cortex') {
         //     steps {
         //         dir("${DOCKER_DIR}/thehive_cortex") {
@@ -154,23 +170,7 @@ pipeline {
         //     }
         // }
 
-        stage('Deploy nextcloud') {
-            steps {
-                dir("${DOCKER_DIR}/nextcloud") {
-                    sh 'docker compose pull'
-                    sh 'docker compose up -d --remove-orphans'
-                }
-            }
-        }
-
-        stage('Deploy portainer') {
-            steps {
-                dir("${DOCKER_DIR}/portainer") {
-                    sh 'docker compose pull'
-                    sh 'docker compose up -d --remove-orphans'
-                }
-            }
-        }
+        
     }
 
     post {

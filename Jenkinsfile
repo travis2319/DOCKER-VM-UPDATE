@@ -170,7 +170,11 @@ pipeline {
         //     }
         // }
 
-        
+        stage('Cleanup Temporary Directories') {
+            steps {
+                sh 'rm -rf /home/ubuntu/docker/*@tmp'
+            }
+        }
     }
 
     post {
